@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://chat-app-backend-11ku.onrender.com';
 import { toast } from 'react-toastify';
 
 interface SendMessageResponse {

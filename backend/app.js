@@ -14,6 +14,11 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.set('io', io); // Make io accessible in routes
@@ -59,3 +64,6 @@ sequelize.sync({ force: false })
     server.listen(port, () => console.log(`Server is running on port ${port}`));
   })
   .catch(error => console.log('Error syncing database:', error));
+  
+
+module.exports = app;
