@@ -1,14 +1,41 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/G6j49ryTCdm
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { signup } from '../services/user';
+import { useState , useEffect } from 'react';
 
 export default function Component() {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    if(localStorage.getItem('token')) {
+      window.location.href = '/chat';
+    }
+    else{
+      setLoading(false);
+    }
+  }, []);
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    try {
+      const response = await signup(username, email, password);
+      const { token , userId} = response;
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', userId);
+      window.location.href = '/chat';
+      
+    } catch (err) {
+      console.error('Signup failed:', err);
+    }
+  };
+
   return (
+    (loading) ? <div></div> :
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-[#fff] px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-md rounded-xl border border-[#ffa500] bg-white p-8 shadow-lg">
         <div className="space-y-4">
@@ -21,8 +48,8 @@ export default function Component() {
               </a>
             </p>
           </div>
-          <form className="space-y-4 text-left">
-          <div>
+          <form onSubmit={handleSubmit} className="space-y-4 text-left">
+            <div>
               <Label htmlFor="username" className="block text-xl font-medium text-[#333]">
                 UserName
               </Label>
@@ -30,6 +57,7 @@ export default function Component() {
                 <Input
                   id="username"
                   type="text"
+                  onChange={(e) => setUsername(e.target.value)}
                   placeholder="Joe Doe"
                   required
                   className="block w-full text-lg rounded-xl border-[#ffa500] bg-[#fff] px-3 py-2 text-[#333] shadow-sm focus:border-[#ffa500] focus:ring-[#ffa500]"
@@ -44,6 +72,7 @@ export default function Component() {
                 <Input
                   id="email"
                   type="email"
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="m@example.com"
                   required
                   className="block w-full text-lg rounded-xl border-[#ffa500] bg-[#fff] px-3 py-2 text-[#333] shadow-sm focus:border-[#ffa500] focus:ring-[#ffa500]"
@@ -58,6 +87,7 @@ export default function Component() {
                 <Input
                   id="password"
                   type="password"
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                   required
                   className="block w-full rounded-xl text-lg border-[#ffa500] bg-[#fff] px-3 py-2 text-[#333] shadow-sm focus:border-[#ffa500] focus:ring-[#ffa500]"
@@ -68,7 +98,7 @@ export default function Component() {
               type="submit"
               className="flex  w-full justify-center rounded-xl text-lg bg-[#ffa500] px-4 py-3 font-medium text-white shadow-sm hover:bg-[#ff8c00] focus:outline-none focus:ring-2 focus:ring-[#ffa500] focus:ring-offset-2"
             >
-              Sign in
+              Get Started
             </Button>
           </form>
         </div>
